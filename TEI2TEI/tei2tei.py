@@ -28,7 +28,7 @@ def gathers(dofacs=True, volumes=False):
 				soups_list = []
 				for page in input_pages_l:
 					path_to_page = os.path.join(path_to_document, page)
-					with open(path_to_page, "r") as f:
+					with open(path_to_page, "rb") as f:
 						page_f = f.read()
 					soup = BeautifulSoup(page_f, "xml")
 					soups_list.append(soup)
