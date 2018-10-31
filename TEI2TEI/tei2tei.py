@@ -12,7 +12,7 @@ PATTERN_TITLE = re.compile(r", +\d+ -|, page \d+ -")
 PATTERN_BODY = re.compile(r"</body> *\n* *<body>")
 
 
-def gathers(dofacs=True):
+def gathers(dofacs=True, volumes=False):
 	"""Transform TEI XML files from input directory
 	"""
 	input_content_l = os.listdir(PATH_TO_INPUT)
@@ -36,19 +36,23 @@ def gathers(dofacs=True):
 					# Making up teiHeader from first teiHeader
 					content = soups_list[0]
 					header = content.teiHeader
-					title = header.title.string
-					title = PATTERN_TITLE.sub(" -", title)
+					title_orig = header.title.string
+					title = PATTERN_TITLE.sub(" -", title_orig)
 					header.title.string.replace_with(title)
 					finalsoup = BeautifulSoup('<TEI xmlns="http://www.tei-c.org/ns/1.0"><placeholder1></TEI>', "xml")
 					finalsoup.TEI.append(header)
 					# grouping facs and bodies
 					if dofacs:
-						gbg, number = title.split(",")
-						number, gbg = number.split("-")
-						if "(" in number:
-							number, gbg = number.split("(")
-						number = int(number.strip())
-						
+						if volumes:
+							gbg, chunck = title.split(",")
+							chunck, gbg = chunck.split("-")
+							if "(" in chunck:
+								chunck, gbg = chunck.split("(")
+							chunck = chunck.strip()
+						else:
+							chunck_l = title_orig.split(",")
+							chunck = chunck_l[0]
+							chunck = chunck.replace(" ", "").replace("\\","-").replace("/","-").lower()
 						all_facs = [soup.facsimile for soup in soups_list]
 						for facs in all_facs:
 							finalsoup.TEI.append(facs)
@@ -74,7 +78,7 @@ def gathers(dofacs=True):
 					str_finalsoup = str(finalsoup)
 					str_finalsoup = PATTERN_BODY.sub("\n", str_finalsoup)
 					if dofacs:
-						str_finalsoup = str_finalsoup.replace("facs_", "facs_%s_" % number)
+						str_finalsoup = str_finalsoup.replace("facs_", "facs_%s_" % chunck)
 					schema = '<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>\n<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>\n<TEI '
 					str_finalsoup = str_finalsoup.replace("<TEI ", schema)
 					# writing XML file
@@ -88,6 +92,7 @@ if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description="Transform TEI XML files.")
 	parser.add_argument("-n", "--nofacs", action="store_false", help="script will ignore facsimile elements.")
+	parser.add_argument("-v", "--volumes", action="store_true", help="script will use volume numbers and not title to calculate modification to facs' xml:ids.")
 	args = parser.parse_args()
 
-	gathers(args.nofacs)
+	gathers(args.nofacs, args.volumes)

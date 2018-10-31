@@ -8,7 +8,7 @@ CWD = os.path.dirname(os.path.abspath(__file__))
 PATH_TO_INPUT = os.path.join(CWD, "input")
 PATH_TO_OUTPUT = os.path.join(CWD, "output")
 
-def maketeicorpus(filename=None):
+def maketeicorpus(volumes=False, filename=None):
 	input_content_l = os.listdir(PATH_TO_INPUT)
 	if len(input_content_l) == 0:
 		print("Nothing in input. Exit.")
@@ -22,19 +22,26 @@ def maketeicorpus(filename=None):
 			with open(path_to_document, "r") as f:
 				document_f = f.read()
 			soup = BeautifulSoup(document_f, "xml")
-			title = soup.TEI.teiHeader.titleStmt.title.string
-			gbg, number = title.split(",")
-			number, gbg = number.split("-")
-			if "(" in number:
-				number, gbg = number.split("(")
-			number = int(number.strip()) 
-			soups_dict[number] = soup
-		list_num = soups_dict.keys()
-		list_num = sorted(list_num)
+			title_orig = soup.TEI.teiHeader.titleStmt.title.string
+			if volumes:
+				gbg, number = title_orig.split(",")
+				number, gbg = number.split("-")
+				if "(" in number:
+					number, gbg = number.split("(")
+				number = int(number.strip()) 
+				soups_dict[number] = soup
+				list_key = soups_dict.keys()
+				list_key = sorted(list_key)
+			else:
+				chunck_l = title_orig.split(",")
+				chunck = chunck_l[0]
+				chunck = chunck.replace(" ", "").replace("\\","-").replace("/","-").lower()
+				soups_dict[chunck] = soup
+				list_key = soups_dict.keys()
 		globalheader = '<teiCorpus xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title>%s</title></titleStmt><publicationStmt><p></p></publicationStmt><sourceDesc><p></p></sourceDesc></fileDesc></teiHeader></teiCorpus>' % filename 
 		finalsoup = BeautifulSoup(globalheader, "xml")
-		for num in list_num:
-			soup = soups_dict[num]
+		for key in list_key:
+			soup = soups_dict[key]
 			tei = soup.TEI
 			finalsoup.teiCorpus.append(tei)
 		path_to_output_file = os.path.join(PATH_TO_OUTPUT, "%s.xml" % filename)
@@ -48,4 +55,8 @@ def maketeicorpus(filename=None):
 
 
 if __name__ == "__main__":
-	maketeicorpus()
+	import argparse
+	parser = argparse.ArgumentParser(description="Transform TEI XML files.")
+	parser.add_argument("-v", "--volumes", action="store_true", help="script will order files before merging them based on a volume number given in the title element.")
+	args = parser.parse_args()
+	maketeicorpus(args.volumes)
