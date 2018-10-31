@@ -1,0 +1,5 @@
+TEI2TEI/input/
+TEI2TEI/output/
+TEI2TEICORPUS/input
+TEI2TEICORPUS/output
+.venv/
