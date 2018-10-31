@@ -13,6 +13,7 @@ def maketeicorpus(filename=None):
 	if len(input_content_l) == 0:
 		print("Nothing in input. Exit.")
 	else:
+		input_content_l[:] = (value for value in input_content_l if value != ".DS_Store")
 		filename = filename or input("Choose a name for output file : ")
 		filename = filename.replace(".", "_").replace("/", "_").replace("\\", "_") 
 		soups_dict = {}

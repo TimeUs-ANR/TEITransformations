@@ -9,7 +9,7 @@ CWD = os.path.dirname(os.path.abspath(__file__))
 PATH_TO_INPUT = os.path.join(CWD, "input")
 PATH_TO_OUTPUT = os.path.join(CWD, "output")
 PATTERN_TITLE = re.compile(r", +\d+ -|, page \d+ -")
-	PATTERN_BODY = re.compile(r"</body> *\n* *<body>")
+PATTERN_BODY = re.compile(r"</body> *\n* *<body>")
 
 
 def gathers(dofacs=True):
@@ -19,10 +19,12 @@ def gathers(dofacs=True):
 	if len(input_content_l) == 0:
 		print("Nothing in input. Exiting.")
 	else:
+		input_content_l[:] = (value for value in input_content_l if value != ".DS_Store")
 		for document in input_content_l:
 			path_to_document = os.path.join(PATH_TO_INPUT, document)
 			input_pages_l = os.listdir(path_to_document)
 			if len(input_pages_l) > 0:
+				input_pages_l[:] = (value for value in input_pages_l if value != ".DS_Store")
 				soups_list = []
 				for page in input_pages_l:
 					path_to_page = os.path.join(path_to_document, page)
