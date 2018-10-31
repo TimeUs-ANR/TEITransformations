@@ -13,6 +13,9 @@ Both scripts expect TEI XML files created with `ExportFromTranskribus` project w
 
 Where {number} refers to a volume. This is because they were initially designed to transform newpapers transcriptions. 
 
+### Input formats
+- `tei2tei.py` expects **directories** containing TEI XML files in `input/`. Each directories forms a bundle merged into an output TEI XML file.
+-  `tei2teicorpus.py` expects **TEI XML files** in `input/`. All files in the directory will be merged into the output TEI XML file.
 
 ### Installing
 - use virtual environment with Python3 and requirements installed
