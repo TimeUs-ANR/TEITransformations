@@ -55,7 +55,7 @@ if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser(description="Transform TEI XML files.")
 	parser.add_argument("-i", "--input", action="store", nargs=1, default=["input"], help="path to directory containing file to transform")
-	parser.add_argument("-o", "--output", action="store", nargs=1, default=["output"], help="path to directory receiving transformes files.")
+	parser.add_argument("-o", "--output", action="store", nargs=1, default=["output"], help="path to directory receiving transformed file.")
 	parser.add_argument("-v", "--volumes", action="store_true", help="script will order files before merging them based on a volume number given in the title element of each file.")
 	args = parser.parse_args()
 
