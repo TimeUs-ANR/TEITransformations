@@ -22,8 +22,25 @@ def gathers(dofacs=True, volumes=False):
                 input_pages_l = os.listdir(path_to_document)
                 if len(input_pages_l) > 0:
                     input_pages_l[:] = (value for value in input_pages_l if value != ".DS_Store")
+                    # SORTING PAGES IN RIGHT ORDER
+                    sorted_input_pages_l = []
+                    page_numbers = []
+                    extensions = {}
+                    for page in [f for f in input_pages_l if f.endswith(".xml")]:
+                        page_number, extension = page.split("-")
+                        page_number.strip()
+                        try:
+                            page_numbers.append(int(page_number))
+                            extensions[int(page_number)] = extension
+                        except TypeError:
+                            page_numbers.append(page_number)
+                            extensions[page_number] = extension
+                    page_numbers.sort()
+                    for page_number in page_numbers:
+                        complete_filename = "%s -%s" % (page_number, extensions[page_number])
+                        sorted_input_pages_l.append(complete_filename)
                     soups_list = []
-                    for page in input_pages_l:
+                    for page in sorted_input_pages_l:
                         path_to_page = os.path.join(path_to_document, page)
                         with open(path_to_page, "rb") as f:
                             page_f = f.read()
