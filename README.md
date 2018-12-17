@@ -19,7 +19,7 @@ Where {number} refers to a volume. This is because they were initially designed 
 
 ### Installing
 - use virtual environment with Python3 and requirements installed
-- create `input` and `output` directories in `TEI2TEI` and `TEI2TEICORPUS` directories to store and retrieve your data, or use --input/--output options to specify other directories.
+- create `input/` and `output/` directories in `TEI2TEI/` and `TEI2TEICORPUS/` directories to store and retrieve your data, or use --input/--output options to specify other directories.
 
 ### Running
 
@@ -27,8 +27,7 @@ Where {number} refers to a volume. This is because they were initially designed 
 TEI2TEI can transform groups of XML files according to different features.  
 
 ##### INPUT and OUTPUT options
-By default, *tei2tei.py* will merge xml files contained in a directory placed in a directory named `input/` and will place the result in a directory named `output/`.  
-Both `input/` and `output/` are expected to be in the same directory as *tei2tei.py*.  
+By default, *tei2tei.py* will merge xml files contained in a directory placed in a directory named `input/` and will place the result in a directory named `output/`. Both `input/` and `output/` are expected to be in the same directory as *tei2tei.py*.  
 ```
 (.venv)~$ python3 tei2tei.py
 ```
@@ -48,10 +47,10 @@ Will cause the script to ignore facsimile elements and related attributes:
 
 ###### `--volumes/-v`
 Will cause the script to use volume numbers and not complete title to create values to xml:ids in facsimile elements and related.  
-It is designed for files that are part of the same series and that are numbered accordingly, as unique volumes in the series.  
-Use this option if your titles are formed according to the following pattern : "{title}, {unique\_number}, page {page\_number} - Transcription".  
-**Do not use this option if** your series includes several times the same volume number!  
-This option will have no effect if the --nofacs/-n option is activated.  
+- It is designed for files that are part of the same series and that are numbered accordingly, as unique volumes in the series.  
+- Use this option if your titles are formed according to the following pattern : "{title}, {unique\_number}, page {page\_number} - Transcription".  
+- **Do not use this option if** your series includes several times the same volume number!  
+- **Note** that this option will have no effect if the --nofacs/-n option is activated.  
 ```
 (.venv)~$ python3 tei2tei.py --volumes
 ```
@@ -71,7 +70,7 @@ You can specify the directory containing the files to merge and/or the directory
 (.venv)~$ python3 tei2teicorpus.py --input directory/name --output directory/name
 ```
 
-By default, the TEI elements in the final teiCorpus will be ordered randomly. You can use addition options to better control the ordering of the TEI elements:  
+By default, the TEI elements in the final teiCorpus will be ordered randomly. You can use addition options to better control the ordering of the TEI elements.  
 
 
 ##### Additional sorting options:
@@ -79,20 +78,20 @@ By default, the TEI elements in the final teiCorpus will be ordered randomly. Yo
 ###### `--volumes/-v`
 
 Will cause the script to use volume numbers in ascending order to sort the TEI elements.  
-It is designed for files that are part of the same series and that are numbered accordingly, as unique volumes in the series.  
-Use this option if your titles are formed according to the following pattern: "{title}, {unique\_number}, page {page\_number} - Transcription".  
-**Do not use this option if** your series includes several times the same volume number or they will be overwritten!  
+- It is designed for files that are part of the same series and that are numbered accordingly, as unique volumes in the series.  
+- Use this option if your titles are formed according to the following pattern: "{title}, {unique\_number}, page {page\_number} - Transcription".  
+- **Do not use this option if** your series includes several times the same volume number or they will be overwritten!  
 ```
 (.venv)~$ python3 tei2teicorpus.py --volumes
 ```
 
 ###### `--sort/-s` 
 
-Will cause the script to use file names in ascending order to sort TEI elements
-**WARNING:** this option required filenames to be numbers that you manually added
+Will cause the script to use file names in ascending order to sort TEI elements.  
+- **WARNING:** this option required filenames to be numbers that you manually added.  
 ```
 (.venv)~$ python3 tei2teicorpus.py --sort
 ```
 
-**WARNING:** `--sort/-s` and `--volumes/-v` are NOT compatible
+`--sort/-s` and `--volumes/-v` are NOT compatible
 
