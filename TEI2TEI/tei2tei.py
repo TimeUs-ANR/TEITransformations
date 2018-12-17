@@ -66,7 +66,7 @@ def gathers(dofacs=True, volumes=False):
                             else:
                                 chunck_l = title_orig.split(",")
                                 chunck = chunck_l[0]
-                                chunck = chunck.replace(" ", "").replace("\\","-").replace("/","-").lower()
+                                chunck = chunck.replace(" ", "").replace("\\","-").replace("/","-").replace("'", "").lower()
                             all_facs = [soup.facsimile for soup in soups_list]
                             for facs in all_facs:
                                 finalsoup.TEI.append(facs)
