@@ -2,6 +2,7 @@
 
 import os
 from bs4 import BeautifulSoup
+import logging
 
 def maketeicorpus(volumes=False, sort=False):
     input_content_l = os.listdir(PATH_TO_INPUT)
@@ -35,7 +36,10 @@ def maketeicorpus(volumes=False, sort=False):
             title_orig = soup.TEI.teiHeader.titleStmt.title.string
             if volumes:
                 # Sorting files from title element
+                #try: # debugging when we forgot a comma!!
                 gbg, piece = title_orig.split(",")
+                #except:
+                #    print("ERROR with splitting on ',': " + path_to_document)
                 piece, gbg = piece.split("-")
                 if "_duplicated" in piece:
                     piece, gbg = piece.split("_duplicated")
@@ -50,7 +54,7 @@ def maketeicorpus(volumes=False, sort=False):
                 sorted_k[document] = piece
         list_keys = soups_dict.keys()
         if volumes:
-            list_keys = sorted(list_key)
+            list_keys = sorted(list_keys)
         if sort:
             list_keys = [sorted_k[dn] for dn in document_list]
         globalheader = '<teiCorpus xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><fileDesc><titleStmt><title>%s</title></titleStmt><publicationStmt><p></p></publicationStmt><sourceDesc><p></p></sourceDesc></fileDesc></teiHeader></teiCorpus>' % filename
