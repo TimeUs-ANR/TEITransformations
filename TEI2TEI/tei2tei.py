@@ -6,19 +6,37 @@ from bs4 import BeautifulSoup
 
 PATTERN_TITLE = re.compile(r", +\d+ -|, page \d+ -")
 PATTERN_BODY = re.compile(r"</body> *\n* *<body>")
-
+schema = '<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>\n<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>\n<TEI '
 
 def gathers(dofacs=True, volumes=False):
     """Transform TEI XML files from input directory
     """
-    try:
-        input_content_l = os.listdir(PATH_TO_INPUT)
-        if len(input_content_l) == 0:
-            print("Nothing in input. Exiting.")
-        else:
-            input_content_l[:] = (value for value in input_content_l if value != ".DS_Store")
-            for document in input_content_l:
-                path_to_document = os.path.join(PATH_TO_INPUT, document)
+    #try:
+    input_content_l = os.listdir(PATH_TO_INPUT)
+    if len(input_content_l) == 0:
+        print("Nothing in input. Exiting.")
+    else:
+        input_content_l[:] = (value for value in input_content_l if value != ".DS_Store")
+        for document in input_content_l:
+            path_to_document = os.path.join(PATH_TO_INPUT, document)
+            if os.path.isfile(path_to_document) is True:
+                #If we deal with just a file, we can still process it or not whether the arg -nofacs was used or not
+                #This produces the same file, but without <facsimile> and @facs and @n
+                with open(path_to_document) as file:
+                    fileSoup = BeautifulSoup(file, 'xml')
+                if dofacs is False:
+                    fileSoup.facsimile.decompose()
+                    for tag in fileSoup.findAll('facs' is True):
+                        del(tag["facs"])
+                    # This removes the  @n attributes in all <lb>
+                    for lb in fileSoup.findAll("lb"):
+                        del(lb["n"])
+                    str_finalsoup = str(fileSoup)
+                    str_finalsoup = str_finalsoup.replace("<TEI ", schema)
+                    path_to_document_out = os.path.join(PATH_TO_OUTPUT, document)
+                    with open(path_to_document_out, "w") as f:
+                        f.write(str_finalsoup)
+            else:
                 input_pages_l = os.listdir(path_to_document)
                 if len(input_pages_l) > 0:
                     input_pages_l[:] = (value for value in input_pages_l if value != ".DS_Store")
@@ -91,25 +109,26 @@ def gathers(dofacs=True, volumes=False):
                             all_zone = finalsoup.find_all("zone")
                             for zone in all_zone:
                                 del zone["subtype"]
+                        #Ça ne fonctionne pas, inutile d'appeler "contents" à mon avis. Cf plus haut.
+                        '''
                         all_tags = finalsoup.TEI.contents
                         for tag in all_tags:
                             del tag["facs"]
-
+                            '''
                         finalsoup.TEI.temptext.name = "text"
 
                         str_finalsoup = str(finalsoup)
                         str_finalsoup = PATTERN_BODY.sub("\n", str_finalsoup)
                         if dofacs:
                             str_finalsoup = str_finalsoup.replace("facs_", "facs_%s_" % chunck)
-                        schema = '<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>\n<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>\n<TEI '
                         str_finalsoup = str_finalsoup.replace("<TEI ", schema)
                         # writing XML file
                         path_to_document_out = os.path.join(PATH_TO_OUTPUT, "%s.xml" % document)
                         with open(path_to_document_out, "w") as f:
                             f.write(str_finalsoup)
-    except Exception as e:
+'''    except Exception as e:
         print(e)
-
+'''
 
 if __name__ == "__main__":
     import argparse
