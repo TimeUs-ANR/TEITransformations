@@ -75,6 +75,14 @@ def gathers(dofacs=True, volumes=False):
                         tag_text = tag_text.temptext.extract()
                         finalsoup.TEI.append(tag_text)
                         for body in all_body:
+                            ####
+                            #This removes all the  @facs attributes in <lb>, <pb>, etc.
+                            for tag in body.findAll('facs' is True):
+                                del(tag["facs"])
+                            #This removes the  @n attributes in all <lb>
+                            for lb in body.findAll("lb"):
+                                del(lb["n"])
+                            ####
                             finalsoup.TEI.temptext.append(body)
                         # cleaning TEI
                         finalsoup.placeholder1.decompose()
